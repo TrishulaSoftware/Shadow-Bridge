@@ -26,14 +26,12 @@ jobs:
           pip install gitpython
           if [ -f Security-Janitor/requirements.txt ]; then pip install -r Security-Janitor/requirements.txt; fi
 
-      - name: "CRUCIBLE: Prompt Injection Simulation"
+      - name: "CRUCIBLE: Hardcoded Password Simulation"
         run: |
             echo "Injecting Stochastic Feral Signatures..."
-            # Simulates an attacker trying to bypass the Janitor cages
-            # By attempting to inject code with un-sanitized em-dashes or secrets
             mkdir -p crucible_temp
-            echo "print('Poison-Drift')" > crucible_temp/poison.py
+            echo "password = 'SuperSecret123'" > crucible_temp/secrets.py
             
-            # Run Janitor. Expectation: IT MUST DETECT 1 FINDING.
+            # Run Janitor. Expectation: IT MUST DETECT 1 FINDING (SEC002).
             python Security-Janitor/janitor_core.py --target crucible_temp --dry-run > audit.log 2>&1
-            grep "TS-005" audit.log
+            grep "SEC002" audit.log

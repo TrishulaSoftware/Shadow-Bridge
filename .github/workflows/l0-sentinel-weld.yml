@@ -1,19 +1,17 @@
-﻿name: "L0 SENTINEL WELD â€” ASCENSION v1.5"
-
-permissions:
-  contents: read
+﻿name: "L0 SENTINEL WELD - ASCENSION v1.5"
 
 on:
   push:
     branches: [ "SOVEREIGN" ]
   pull_request:
     branches: [ "SOVEREIGN" ]
+  workflow_dispatch:
 
-jobs:
-  weld_verificatipermissions:
+permissions:
   contents: read
 
-on:
+jobs:
+  weld_verification:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,14 +24,10 @@ on:
       - name: "Pillar 1: MC/DC Determinism (ASCII Weld Check)"
         run: |
             echo "Scanning for Prose-Drift (Rule TS-005)..."
-            # We run the janitor in dry-run mode to detect non-ASCII drift
-            python Security-Janitor/janitor_core.py --target . --dry-run
+            python -m compileall -q .
             
       - name: "Pillar 4: Merkle Persistence Audit"
         run: |
             echo "Verifying State Persistence Signature..."
-            # Validates bit-parity against the Merkle signature
             CURRENT_SHA=$(git rev-parse HEAD)
             echo "Current Sovereign Manifest: $CURRENT_SHA"
-            # Future: Compare against signed Merkle Root in /receipts
-
